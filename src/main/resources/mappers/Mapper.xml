@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.green.foodrecommend.Food.FoodMapper">
+    <insert id="insFood" useGeneratedKeys="true" keyProperty="ifood">
+        insert into t_food set
+        title= #{title}, ingredient=#{ingredient},
+        recipe=#{recipe}, comment= #{comment}
+    </insert>
+    <insert id="insFoodPics">
+        insert into t_food_pic
+        (ifood, pic) values
+        <foreach collection="pics" item="pic" separator=",">
+            (#{ifood}, #{pic})
+        </foreach>
+    </insert>
+    <insert id="insFoodTags">
+        insert into t_food_tag
+        (ifood, tag) values
+        <foreach collection="tags" item="tag" separator=",">
+            (#{ifood}, #{tag})
+        </foreach>
+    </insert>
+    <select id="selFood">
+        select a.ifood, a.title, a.ingredient, a.recipe, a.comment
+        from t_food a
+        <if test="tag!=null and tag!=''">
+        join t_food_tag b on a.ifood= b.ifood
+        where title like "%#{tag}%"
+        </if>
+        limit #{startIdx},#{rowCount}
+    </select>
+    <select id="selPicsByIfood">
+        select ifood, pic from t_food_pic
+        where ifood in
+        <foreach collection="ifoodList" item="ifood" open="(" close=")" separator=",">
+            #{ifood}
+        </foreach>
+    </select>
+    <select id="selTagsByIfood">
+        select ifood, tag from t_food_tag
+        where ifood in
+        <foreach collection="ifoodList" item="ifood" open="(" close=")" separator=",">
+            #{ifood}
+        </foreach>
+    </select>
+    <update id="updFood">
+        update t_food set
+        title= #{title}, ingredient= #{ingredient},
+        recipe= #{recipe}, contents= #{contents}
+        where ifood= #{ifood}
+    </update>
+    <update id="updFoodPic">
+        update t_food_pic set
+        pic= #{pic}
+        where ipic= #{ipic}
+    </update>
+    <update id="updFoodTag">
+        update t_food_tag set
+        tag= #{tag}
+        where itag= #{itag}
+    </update>
+    <delete id="delFood">
+        delete from t_food
+        where ifood=#{ifood}
+    </delete>
+    <delete id="delFoodPic">
+        delete from t_food_pic
+        where ipic=#{ipic}
+    </delete>
+    <delete id="delFoodPicsByIfood">
+        delete from t_food_pic
+        where ifood= #{ifood}
+    </delete>
+    <delete id="delFoodTag">
+        delete from t_food_tag
+        where itag=#{itag}
+    </delete>
+    <delete id="delFoodTagsByIfood">
+        delete from t_food_tag
+        where ifood= #{ifood}
+    </delete>
+
+</mapper>
